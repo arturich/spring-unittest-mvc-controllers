@@ -51,5 +51,12 @@ public class StudentAndGradeService {
 		
 		return collegeStudents;
 	}
+	
+	public void createStudent(CollegeStudent student)
+	{		
+		student.setId(0);
+		
+		studentDao.save(student);
+	}
 
 }

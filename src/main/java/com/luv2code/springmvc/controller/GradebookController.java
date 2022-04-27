@@ -28,5 +28,14 @@ public class GradebookController {
 	public String studentInformation(@PathVariable int id, Model m) {
 		return "studentInformation";
 	}
+	
+	@PostMapping("/")
+	public String createStudent(@ModelAttribute("student") CollegeStudent student,
+			Model m)
+	{
+		studentService.createStudent(student);
+		
+		return "index";
+	}
 
 }
