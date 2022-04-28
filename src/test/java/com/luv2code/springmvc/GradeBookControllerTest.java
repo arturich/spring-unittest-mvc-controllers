@@ -1,14 +1,17 @@
 package com.luv2code.springmvc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -102,6 +105,15 @@ public class GradeBookControllerTest {
 	@DisplayName("create Student via http request")
 	public void createStudentHttpRequest() throws Exception
 	{
+		CollegeStudent studentOne = new GradebookCollegeStudent("Eric", 
+				"Petters", "eric@citalin.com" );
+		
+		List<CollegeStudent> collegeStudentList = new ArrayList<>(Arrays.asList(studentOne));
+		
+		when(studentAndGradeServiceMock.getGradebook()).thenReturn(collegeStudentList);
+		
+		assertIterableEquals(collegeStudentList, studentAndGradeServiceMock.getGradebook());
+		
 		MvcResult mvcResult = (MvcResult) this.mockMvc.perform(MockMvcRequestBuilders.post("/")
 				.contentType(MediaType.APPLICATION_JSON)
 				.param("firstname", request.getParameterValues("firstname"))
@@ -118,6 +130,29 @@ public class GradeBookControllerTest {
 		assertNotNull(verifyStudent,"Student should be found");
 		
 		assertEquals("chad.darby@luv2code_school.com", verifyStudent.getEmailAddress(),"Exact email is expected");
+	}
+	
+	@Test
+	@DisplayName("Delete an student")
+	public void deleteStudentHttpRequest() throws Exception
+	{
+		int id = 1;
+		//Get student first 
+		Optional<CollegeStudent> verifyStudent = studentDao.findById(id);
+		assertTrue(verifyStudent.isPresent(),"Student should exist before removing it");
+		
+		//Delete from controller
+		MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.delete("/delete/student/{id}",id))
+				.andExpect(status().isOk()).andReturn();
+		
+		ModelAndView mav = mvcResult.getModelAndView();
+		
+		ModelAndViewAssert.assertViewName(mav, "index");
+		
+		verifyStudent = studentDao.findById(id);
+		assertFalse(verifyStudent.isPresent(),"Student should NOT exist before removing it");
+		
+		
 	}
 	
 	
