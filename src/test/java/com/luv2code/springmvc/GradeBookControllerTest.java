@@ -20,6 +20,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -57,6 +58,30 @@ public class GradeBookControllerTest {
 	@Autowired
 	private StudentDao studentDao;
 	
+	@Value("${sql.scripts.create.student}")
+	String sqlCreateStudent;
+	
+	@Value("${sql.scripts.create.math.grade}")
+	String sqlMathGrade;
+	
+	@Value("${sql.scripts.create.science.grade}")
+	String sqlScienceGrade;
+	
+	@Value("${sql.scripts.create.history.grade}")
+	String sqlHistoryGrade;
+	
+	@Value("${sql.script.delete.student}")
+	String sqlDeleteStudent;
+	
+	@Value("${sql.script.delete.math.grade}")
+	String sqlDeleteMath;
+	
+	@Value("${sql.script.delete.science.grade}")
+	String sqlDeleteScience;
+	
+	@Value("${sql.script.delete.history.grade}")
+	String sqlDeleteHistory;
+	
 	
 	@BeforeAll
 	public static void setup()
@@ -71,8 +96,10 @@ public class GradeBookControllerTest {
 	@BeforeEach
 	public void setupDatabase()
 	{
-		jdbcTemplate.execute("INSERT INTO student(id,firstname,lastname,email_address)"
-				+ " values(1,'Eric','Roby','eric_roby@luv2code_school.com')");
+		jdbcTemplate.execute(sqlCreateStudent);		
+		jdbcTemplate.execute(sqlMathGrade);
+		jdbcTemplate.execute(sqlScienceGrade);
+		jdbcTemplate.execute(sqlHistoryGrade);
 	}
 	
 	@Test
@@ -173,7 +200,10 @@ public class GradeBookControllerTest {
 	@AfterEach
 	public void setupAfterTransaction()
 	{
-		jdbcTemplate.execute("DELETE FROM student");
+		jdbcTemplate.execute(sqlDeleteStudent);
+		jdbcTemplate.execute(sqlDeleteMath);
+		jdbcTemplate.execute(sqlDeleteScience);
+		jdbcTemplate.execute(sqlDeleteHistory);
 	}
 	
 	
