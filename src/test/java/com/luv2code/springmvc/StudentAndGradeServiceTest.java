@@ -22,6 +22,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 
 import com.luv2code.springmvc.models.CollegeStudent;
+import com.luv2code.springmvc.models.GradebookCollegeStudent;
 import com.luv2code.springmvc.models.HistoryGrade;
 import com.luv2code.springmvc.models.MathGrade;
 import com.luv2code.springmvc.models.ScienceGrade;
@@ -103,10 +104,27 @@ class StudentAndGradeServiceTest {
 	{
 		int id = 1;
 		Optional<CollegeStudent> student = studentDao.findById(id);
+		Optional<MathGrade> deleteMathGrade = mathGradesDao.findById(1);
+		Optional<HistoryGrade> deleteHistoryGrade = historyGradesDao.findById(1);
+		Optional<ScienceGrade> deleteScienceGrade = scienceGradesDao.findById(1);
+		
+		assertTrue(deleteMathGrade.isPresent(),"Math grades should be present");
+		assertTrue(deleteHistoryGrade.isPresent(),"History grades should be present");
+		assertTrue(deleteScienceGrade.isPresent(),"Science grades should be present");
+		
 		if(student.isPresent())
 		{
 			studentService.deleteStudent(student.get());
 		}
+		
+		deleteMathGrade = mathGradesDao.findById(1);
+		deleteHistoryGrade = historyGradesDao.findById(1);
+		deleteScienceGrade = scienceGradesDao.findById(1);
+		
+		assertFalse(deleteMathGrade.isPresent(),"Math grades should NOT be present");
+		assertFalse(deleteHistoryGrade.isPresent(),"History grades should NOT be present");
+		assertFalse(deleteScienceGrade.isPresent(),"Science grades should NOT be present");
+		
 		
 		assertFalse(studentService.checkIfStudentIsNull(id));
 	}
@@ -182,6 +200,35 @@ class StudentAndGradeServiceTest {
 		
 		
 	}
+	
+	@Test
+	@DisplayName("Get student Information")
+	public void getStudentInformation()
+	{
+		GradebookCollegeStudent gradebookCollegeStudent = studentService.studentInformation(1);
+		
+		assertNotNull(gradebookCollegeStudent,"Student must have data");
+		assertEquals(1, gradebookCollegeStudent.getId());
+		assertEquals("Eric",gradebookCollegeStudent.getFirstname());
+		assertEquals("Roby",gradebookCollegeStudent.getLastname());
+		assertEquals("eric_roby@luv2code_school.com",gradebookCollegeStudent.getEmailAddress());
+		assertTrue(gradebookCollegeStudent.getStudentGrades().getMathGradeResults().size() == 1);
+		assertTrue(gradebookCollegeStudent.getStudentGrades().getScienceGradeResults().size() == 1);
+		assertTrue(gradebookCollegeStudent.getStudentGrades().getHistoryGradeResults().size() == 1);
+		
+		
+	}
+	
+	@Test
+	@DisplayName("Student does not exist")
+	public void studentNotExist()
+	{
+		GradebookCollegeStudent gradebookCollegeStudent = studentService.studentInformation(0);
+		
+		assertNull(gradebookCollegeStudent,"Student not exist");
+	}
+	
+	
 	
 	
 	@AfterEach

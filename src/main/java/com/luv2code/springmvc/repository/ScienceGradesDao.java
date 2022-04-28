@@ -7,5 +7,7 @@ import com.luv2code.springmvc.models.ScienceGrade;
 public interface ScienceGradesDao extends CrudRepository<ScienceGrade, Integer>{
 	
 	public Iterable<ScienceGrade> findGradesByStudentId(int id);
+	
+	public void deleteByStudentId(int id);
 
 }
