@@ -102,7 +102,7 @@ public class GradeBookControllerTest {
 	
 	
 	@Test
-	@DisplayName("create Student via http request")
+	@DisplayName("Create Student via http request")
 	public void createStudentHttpRequest() throws Exception
 	{
 		CollegeStudent studentOne = new GradebookCollegeStudent("Eric", 
@@ -142,7 +142,7 @@ public class GradeBookControllerTest {
 		assertTrue(verifyStudent.isPresent(),"Student should exist before removing it");
 		
 		//Delete from controller
-		MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.delete("/delete/student/{id}",id))
+		MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get("/delete/student/{id}",id))
 				.andExpect(status().isOk()).andReturn();
 		
 		ModelAndView mav = mvcResult.getModelAndView();
@@ -152,6 +152,20 @@ public class GradeBookControllerTest {
 		verifyStudent = studentDao.findById(id);
 		assertFalse(verifyStudent.isPresent(),"Student should NOT exist before removing it");
 		
+		
+	}
+	
+	@Test
+	@DisplayName("Error page for student that does not exist")
+	public void errorPageOnDelete() throws Exception
+	{
+		int id = 2;
+		MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/delete/student/{id}",id))
+				.andExpect(status().isOk()).andReturn();
+		
+		ModelAndView mav = mvcResult.getModelAndView();
+		
+		ModelAndViewAssert.assertViewName(mav, "error");		
 		
 	}
 	

@@ -48,9 +48,16 @@ public class GradebookController {
 		return "index";
 	}
 	
-	@DeleteMapping("/delete/student/{id}")
+	@GetMapping("/delete/student/{id}")
 	public String deleteStudent(@PathVariable int id, Model m)
 	{
+		
+		if (!studentService.checkIfStudentIsNull(id))
+		{
+			
+			return "error";
+		}
+		
 		studentService.deleteStudent(id);
 		
 		Iterable<CollegeStudent> collegeStudents =  studentService.getGradebook();
