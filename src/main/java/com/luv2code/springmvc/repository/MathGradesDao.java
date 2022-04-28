@@ -7,5 +7,6 @@ import com.luv2code.springmvc.models.MathGrade;
 public interface MathGradesDao extends CrudRepository<MathGrade, Integer>{
 	
 	public Iterable<MathGrade> findGradesByStudentId(int id);
+	
 
 }

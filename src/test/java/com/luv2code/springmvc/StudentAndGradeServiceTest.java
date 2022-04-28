@@ -2,9 +2,12 @@ package com.luv2code.springmvc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,6 +59,10 @@ class StudentAndGradeServiceTest {
 	{
 		jdbcTemplate.execute("INSERT INTO student(id,firstname,lastname,email_address)"
 				+ " values(1,'Eric','Roby','eric_roby@luv2code_school.com')");
+		
+		jdbcTemplate.execute("INSERT INTO math_grade(id,student_id,grade) values(1,1,100)");
+		jdbcTemplate.execute("INSERT INTO science_grade(id,student_id,grade) values(1,1,100)");
+		jdbcTemplate.execute("INSERT INTO history_grade(id,student_id,grade) values(1,1,100)");
 	}
 
 	@Test
@@ -137,9 +144,9 @@ class StudentAndGradeServiceTest {
 		Iterable<HistoryGrade> historyGrades = historyGradesDao.findGradesByStudentId(1);
 				
 		//Verify there is grades
-		assertTrue(mathGrades.iterator().hasNext(), "Student has math grades");
-		assertTrue(scienceGrades.iterator().hasNext(), "Student has Science grades");
-		assertTrue(historyGrades.iterator().hasNext(), "Student has History grades");
+		assertTrue( ((Collection<MathGrade>)mathGrades).size() == 2, "Student has math grades");
+		assertTrue(((Collection<ScienceGrade>)scienceGrades).size() == 2, "Student has Science grades");
+		assertTrue(((Collection<HistoryGrade>)historyGrades).size() == 2, "Student has History grades");
 		
 	}
 	
@@ -153,12 +160,37 @@ class StudentAndGradeServiceTest {
 		assertFalse(studentService.createGrade(80.5, 1, "literature"));
 	}
 	
+	@Test
+	@DisplayName("Delete Grade")
+	public void deleteGradeService()
+	{
+		//Method deleteGrade returns studentId
+		assertEquals(1,studentService.deleteGrade(1,"math"),"Returns student id");
+		assertEquals(1,studentService.deleteGrade(1,"science"),"Returns student id");
+		assertEquals(1,studentService.deleteGrade(1,"history"),"Returns student id");
+		
+		
+	}
+	
+	
+	@Test
+	@DisplayName("Delete grade service returning 0")
+	public void deleteGradeServiceReturning0() 
+	{
+		assertEquals(0,studentService.deleteGrade(4,"history"),"Returns student id of 0");
+		assertEquals(0,studentService.deleteGrade(2,"music"),"Returns student id of 0");
+		
+		
+	}
 	
 	
 	@AfterEach
 	public void setupAfterTransaction()
 	{
 		jdbcTemplate.execute("DELETE FROM student");
+		jdbcTemplate.execute("DELETE FROM math_grade");
+		jdbcTemplate.execute("DELETE FROM science_grade");
+		jdbcTemplate.execute("DELETE FROM history_grade");
 	}
 	
 
