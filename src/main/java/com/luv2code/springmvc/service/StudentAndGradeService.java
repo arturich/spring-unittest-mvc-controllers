@@ -245,14 +245,14 @@ public class StudentAndGradeService {
 			m.addAttribute("mathAverage", "N/A");
 		}
 
-		if (studentEntity.getStudentGrades().getMathGradeResults().size() > 0) {
+		if (studentEntity.getStudentGrades().getScienceGradeResults().size() > 0) {
 			double scienceAvg = studentEntity.getStudentGrades()
 					.findGradePointAverage(studentEntity.getStudentGrades().getScienceGradeResults());
 			m.addAttribute("scienceAverage", scienceAvg);
 		} else {
 			m.addAttribute("scienceAverage", "N/A");
 		}
-		if (studentEntity.getStudentGrades().getMathGradeResults().size() > 0) {
+		if (studentEntity.getStudentGrades().getHistoryGradeResults().size() > 0) {
 			double historyAvg = studentEntity.getStudentGrades()
 					.findGradePointAverage(studentEntity.getStudentGrades().getHistoryGradeResults());
 			m.addAttribute("historyAverage", historyAvg);
