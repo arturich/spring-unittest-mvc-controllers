@@ -242,6 +242,23 @@ public class GradeBookControllerTest {
 		
 		
 	}
+	
+	@Test
+	@DisplayName("Try to create grade if student does not exist")
+	public void createGradeWhenStudentDoesNotExist() throws Exception
+	{
+		MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/grades")
+				.contentType(MediaType.APPLICATION_JSON)
+				.param("gradeType","math")
+				.param("studentId", "0")
+				.param("grade", "98")
+				).andExpect(status().isOk()).andReturn();
+		
+		ModelAndView mav = mvcResult.getModelAndView();
+		
+		ModelAndViewAssert.assertViewName(mav, "error");
+		
+	}
 
 	@AfterEach
 	public void setupAfterTransaction() {
