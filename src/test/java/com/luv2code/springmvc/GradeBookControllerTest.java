@@ -41,7 +41,7 @@ import com.luv2code.springmvc.repository.StudentDao;
 import com.luv2code.springmvc.service.StudentAndGradeService;
 
 @SpringBootTest
-@TestPropertySource("/application.properties")
+@TestPropertySource("/application-test.properties")
 @AutoConfigureMockMvc
 public class GradeBookControllerTest {
 
