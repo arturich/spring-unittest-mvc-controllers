@@ -259,6 +259,22 @@ public class GradeBookControllerTest {
 		ModelAndViewAssert.assertViewName(mav, "error");
 		
 	}
+	
+	@Test
+	@DisplayName("Create a grade when subject is invalid")
+	public void createAGradeWhenSubjectIsInvalid() throws Exception
+	{
+		MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/grades")
+				.contentType(MediaType.APPLICATION_JSON)
+				.param("gradeType","literature")
+				.param("studentId", "1")
+				.param("grade", "98")				
+				).andExpect(status().isOk()).andReturn();
+		
+		ModelAndView mav = mvcResult.getModelAndView();
+		
+		ModelAndViewAssert.assertViewName(mav,"error");
+	}
 
 	@AfterEach
 	public void setupAfterTransaction() {
