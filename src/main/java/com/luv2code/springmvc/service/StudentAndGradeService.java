@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 
 import com.luv2code.springmvc.models.CollegeStudent;
 import com.luv2code.springmvc.models.Grade;
@@ -228,6 +229,36 @@ public class StudentAndGradeService {
 		
 		
 		return null;
+	}
+	
+	public void configureStudentInformationModel(int id, Model m)
+	{
+		GradebookCollegeStudent studentEntity = studentInformation(id);
+		
+		m.addAttribute("student",studentEntity);
+		
+		if (studentEntity.getStudentGrades().getMathGradeResults().size() > 0) {
+			double mathAvg = studentEntity.getStudentGrades()
+					.findGradePointAverage(studentEntity.getStudentGrades().getMathGradeResults());
+			m.addAttribute("mathAverage", mathAvg);
+		} else {
+			m.addAttribute("mathAverage", "N/A");
+		}
+
+		if (studentEntity.getStudentGrades().getMathGradeResults().size() > 0) {
+			double scienceAvg = studentEntity.getStudentGrades()
+					.findGradePointAverage(studentEntity.getStudentGrades().getScienceGradeResults());
+			m.addAttribute("scienceAverage", scienceAvg);
+		} else {
+			m.addAttribute("scienceAverage", "N/A");
+		}
+		if (studentEntity.getStudentGrades().getMathGradeResults().size() > 0) {
+			double historyAvg = studentEntity.getStudentGrades()
+					.findGradePointAverage(studentEntity.getStudentGrades().getHistoryGradeResults());
+			m.addAttribute("historyAverage", historyAvg);
+		} else {
+			m.addAttribute("historyAverage", "N/A");
+		}
 	}
 
 }
