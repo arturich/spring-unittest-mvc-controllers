@@ -35,6 +35,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.luv2code.springmvc.models.CollegeStudent;
 import com.luv2code.springmvc.models.GradebookCollegeStudent;
+import com.luv2code.springmvc.models.MathGrade;
+import com.luv2code.springmvc.repository.MathGradesDao;
 import com.luv2code.springmvc.repository.StudentDao;
 import com.luv2code.springmvc.service.StudentAndGradeService;
 
@@ -59,6 +61,9 @@ public class GradeBookControllerTest {
 	
 	@Autowired
 	private StudentAndGradeService studentAndGradeService;
+	
+	@Autowired
+	private MathGradesDao mathGradesDao;
 
 	@Value("${sql.scripts.create.student}")
 	String sqlCreateStudent;
@@ -275,6 +280,60 @@ public class GradeBookControllerTest {
 		
 		ModelAndViewAssert.assertViewName(mav,"error");
 	}
+	
+	@Test
+	@DisplayName("Delete grades")
+	public void deleteGradesHttpRequest() throws Exception
+	{
+		//assert that the grade exist
+		Optional<MathGrade> mathGrade = mathGradesDao.findById(1);
+		assertTrue(mathGrade.isPresent(),"Subject must exist");
+		
+		MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
+				.get("/grades/{id}/{gradeType}",1,"math"))
+				.andExpect(status().isOk()).andReturn();
+		
+		ModelAndView mav = mvcResult.getModelAndView();
+		
+		ModelAndViewAssert.assertViewName(mav, "studentInformation");
+		
+		//Confirm grade is not present anymore
+		mathGrade = mathGradesDao.findById(1);
+		
+		assertFalse(mathGrade.isPresent(),"Math grade shouln't be present");
+				
+	}
+	
+	@Test
+	@DisplayName("Delete a Grade when id is invalid")
+	public void deleteGradeWhenIdIsInvalid() throws Exception
+	{
+		Optional<MathGrade> mathGrade = mathGradesDao.findById(2);
+		
+		assertFalse(mathGrade.isPresent(),"Grade should not exist");
+		
+		MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/grades/{id}/{gradeType}",2,"math"))
+				.andExpect(status().isOk()).andReturn();
+		
+		ModelAndView mav = mvcResult.getModelAndView();
+		
+		ModelAndViewAssert.assertViewName(mav, "error");
+	}
+	
+	@Test
+	@DisplayName("Delete a grade when subject is invalid")
+	public void deleteGradeWhenSubjectIdIsInvalid() throws Exception
+	{
+		MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
+				.get("/grades/{id}/{gradeType}",1,"literature"))
+				.andExpect(status().isOk())
+				.andReturn();
+		
+		ModelAndView mav = mvcResult.getModelAndView();
+		
+		ModelAndViewAssert.assertViewName(mav, "error");
+	}
+	
 
 	@AfterEach
 	public void setupAfterTransaction() {
